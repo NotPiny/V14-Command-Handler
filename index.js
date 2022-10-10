@@ -13,14 +13,6 @@ const client = new Client({
 })
 client.on('ready', () => {
   console.log('Load > Bot loaded');
-  console.log(`Running in ${client.guilds.cache.size} servers:`)
-  client.guilds.cache.forEach(guild => {
-    console.log(`${guild.name} / ${guild.id}`);
-  })
-  client.user.setActivity('Testing new stuff', {
-    type: "STREAMING",
-    url: "https://www.twitch.tv/daalbott"
-    });
   const commands = client.application?.commands;
   const testServer = client.guilds.cache.get(config.testServer)
 
