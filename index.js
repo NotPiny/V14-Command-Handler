@@ -1,3 +1,4 @@
+// Load required stuff
 const { Client, GatewayIntentBits, PermissionsBitField, ApplicationCommandPermissionType } = require('discord.js');
 require('dotenv/config');
 const fs = require('fs');
@@ -11,16 +12,22 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
   ],
 })
+
 client.on('ready', () => {
   console.log('Load > Bot loaded');
+
+  // Grab info from config.json
   const commands = client.application?.commands;
   const testServer = client.guilds.cache.get(config.testServer)
 
   commandFiles.forEach(file => {
+    // Load command details from file
     const commandName = file.replace(/.js/, '').toLowerCase();
     if (commandName == 'command.template') return;
     const commandDescription = require(`./commands/${file}`).description;
     const commandOptions = require(`./commands/${file}`).options;
+
+    // Check if the command exists already
     if (!fs.readFileSync('./commands.list').toString().includes(commandName)) {
       if (require(`./commands/${file}`).testOnly == true) {
         testServer?.commands?.create({
@@ -66,6 +73,7 @@ client.on('interactionCreate', interaction => {
   const { commandName, options } = interaction;
 
   if (interaction.isCommand) {
+    // Check if it is a valid command
       if (fs.existsSync(`./commands/${commandName}.js`)) {
         if (require(`./commands/${commandName}.js`).ownerOnly == true) {
           if (config.botOwners.includes(interaction.user.id)) {
@@ -75,6 +83,7 @@ client.on('interactionCreate', interaction => {
             return interaction.reply('Error: You need to be a bot owner to run this command.');
           }
         }
+        // Execute the command
         const response = require(`./commands/${commandName}.js`).callback(interaction);
         if (response) {
           interaction.reply(response);
@@ -87,5 +96,5 @@ client.on('interactionCreate', interaction => {
       }
   }
 })
-
+// Log into the bot
 client.login(process.env.TOKEN)

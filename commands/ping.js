@@ -5,6 +5,7 @@ module.exports = {
     autoUpdate: false,
 
     callback: async (interaction) => {
+        // Executes when the command is run
         return 'Pong!';
     }
 }
